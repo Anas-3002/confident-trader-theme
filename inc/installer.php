@@ -150,6 +150,7 @@ function ct_build_submissions() {
 			'title'  => $p->post_title,
 			'type'   => get_post_meta( $p->ID, '_ct_form_type', true ),
 			'email'  => get_post_meta( $p->ID, '_ct_email', true ),
+			'mail'   => get_post_meta( $p->ID, '_ct_mail', true ),
 			'date'   => $p->post_date_gmt,
 			'fields' => array_filter(
 				array_map(

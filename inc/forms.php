@@ -229,12 +229,13 @@ function ct_handle_form() {
 	if ( ! empty( $clean['email'] ) ) {
 		$headers[] = 'Reply-To: ' . $clean['email'];
 	}
-	wp_mail(
+	$sent = wp_mail(
 		$to,
 		sprintf( '[Confident Trader] %s', $title ),
 		$body,
 		$headers
 	);
+	update_post_meta( $id, '_ct_mail', $sent ? 'sent' : 'failed' );
 
 	/**
 	 * Fires after a submission is stored.

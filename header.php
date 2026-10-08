@@ -34,7 +34,7 @@ $ct_logo = ct_logo_svg( 'ctlg-h', 'h-8 w-8' );
 		<div class="flex items-center gap-space-md shrink-0">
 			<a class="flex items-center gap-space-sm group" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="<?php esc_attr_e( 'Confident Trader — home', 'confident-trader' ); ?>">
 				<?php echo $ct_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static inline SVG. ?>
-				<span class="font-headline-sm text-headline-sm uppercase tracking-tight text-on-surface font-bold">CONFIDENT<span class="text-primary-container">TRADER</span></span>
+				<span class="hidden sm:inline font-headline-sm text-headline-sm uppercase tracking-tight text-on-surface font-bold">CONFIDENT<span class="text-primary-container">TRADER</span></span>
 			</a>
 			<div class="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high/70 border border-outline-variant/30">
 				<span class="relative flex h-2 w-2">

@@ -208,6 +208,32 @@ textarea.ct-input { min-height: 8rem; resize: vertical; }
 .ct-site .ct-el-part .elementor-widget { max-width: 100%; }
 
 /* --------------------------------------------------------------- mobile -- */
+/* Deliberate mobile layer built from the design system's OWN mobile tokens
+   (DESIGN.md: margin-mobile 1rem, headline-xl-mobile 32px/40px,
+   display-hero-mobile 40px/48px). The Stitch export defined these tokens but
+   never referenced them, which is why it overflows by 44px at 320px. */
+@media (max-width: 639px) {
+  .ct-site .px-margin { padding-left: 1rem; padding-right: 1rem; }
+  .ct-site .text-headline-xl {
+    font-size: 32px;
+    line-height: 40px;
+    letter-spacing: -0.02em;
+  }
+  .ct-site .text-display-hero {
+    font-size: 40px;
+    line-height: 48px;
+    letter-spacing: -0.025em;
+  }
+  .ct-site .text-metric-xl {
+    font-size: 34px;
+    line-height: 40px;
+    letter-spacing: -0.02em;
+  }
+  /* Long prose gets a little more measure control on small screens. */
+  .ct-prose { font-size: 16px; line-height: 1.7; }
+  .ct-prose h2 { font-size: 24px; line-height: 32px; }
+}
+
 #ct-mobile-menu[hidden] { display: none; }
 body.ct-menu-open { overflow: hidden; }
 
