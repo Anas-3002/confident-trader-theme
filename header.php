@@ -21,6 +21,9 @@ $ct_nav = array(
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="theme-color" content="#0a0d14">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<?php // Critical fonts are preloaded so the design's type never swaps late (CLS). ?>
+	<link rel="preload" href="<?php echo esc_url( get_template_directory_uri() . '/assets/fonts/space-grotesk-var.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="<?php echo esc_url( get_template_directory_uri() . '/assets/fonts/material-symbols-outlined-subset.woff2' ); ?>" as="font" type="font/woff2" crossorigin>
 	<?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>
