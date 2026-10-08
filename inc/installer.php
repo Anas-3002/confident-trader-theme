@@ -54,6 +54,12 @@ function ct_build_router() {
 			case 'options':
 				ct_build_options( $result );
 				break;
+			case 'submissions':
+				$result['log'] = ct_build_submissions();
+				break;
+			case 'delete-submission':
+				$result['log'] = ct_build_delete_submission( isset( $_GET['id'] ) ? (int) $_GET['id'] : 0 ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				break;
 			case 'all':
 				ct_build_plugins( $result );
 				ct_build_content( $result );
@@ -120,6 +126,56 @@ function ct_manifest() {
 function ct_fragment( $kind, $slug ) {
 	$path = get_template_directory() . '/inc/content/' . $kind . '/' . $slug . '.html';
 	return file_exists( $path ) ? (string) file_get_contents( $path ) : '';
+}
+
+/**
+ * List stored form submissions (build-time read-back only).
+ *
+ * @return array
+ */
+function ct_build_submissions() {
+	$posts = get_posts(
+		array(
+			'post_type'   => 'ct_submission',
+			'numberposts' => 20,
+			'post_status' => 'any',
+			'orderby'     => 'date',
+			'order'       => 'DESC',
+		)
+	);
+	$out = array();
+	foreach ( $posts as $p ) {
+		$out[] = array(
+			'id'     => $p->ID,
+			'title'  => $p->post_title,
+			'type'   => get_post_meta( $p->ID, '_ct_form_type', true ),
+			'email'  => get_post_meta( $p->ID, '_ct_email', true ),
+			'date'   => $p->post_date_gmt,
+			'fields' => array_filter(
+				array_map(
+					function ( $k ) use ( $p ) {
+						return 0 === strpos( $k, '_ct_' ) ? substr( $k, 4 ) : null;
+					},
+					array_keys( get_post_meta( $p->ID ) )
+				)
+			),
+		);
+	}
+	return $out;
+}
+
+/**
+ * Permanently delete one stored submission.
+ *
+ * @param int $id Post id.
+ * @return array
+ */
+function ct_build_delete_submission( $id ) {
+	if ( ! $id || 'ct_submission' !== get_post_type( $id ) ) {
+		return array( 'invalid id' );
+	}
+	$ok = wp_delete_post( $id, true );
+	return array( 'deleted' => $id, 'ok' => (bool) $ok );
 }
 
 /**
