@@ -16,6 +16,7 @@ require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/forms.php';
 require_once get_template_directory() . '/inc/managed-pages.php';
+require_once get_template_directory() . '/inc/el-probe.php'; // TEMP build tool (Elementor introspection).
 // inc/elementor-convert.php was a temporary build tool (it turned the design pages
 // into Elementor documents). The conversion is done and verified, so it is not
 // shipped. Restore it from git history if the environment is ever rebuilt.
