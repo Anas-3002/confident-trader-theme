@@ -266,6 +266,33 @@ function ct_elp_router() {
 		}
 	}
 
+	if ( 'copy' === $action ) {
+		// Some posts refuse a builder write (the write lands on a revision instead of
+		// the post). Build on a scratch post, then transplant the document here.
+		$from = isset( $_GET['from'] ) ? (int) $_GET['from'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$to   = isset( $_GET['to'] ) ? (int) $_GET['to'] : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$src  = get_post( $from );
+		$dst  = get_post( $to );
+		if ( ! $src || ! $dst ) {
+			$out['error'] = 'bad ids';
+		} else {
+			$raw = (string) get_post_meta( $from, '_elementor_data', true );
+			if ( '' === $raw ) {
+				$out['error'] = 'source has no document';
+			} else {
+				update_post_meta( $to, '_elementor_data', wp_slash( $raw ) );
+				update_post_meta( $to, '_elementor_edit_mode', 'builder' );
+				update_post_meta( $to, '_elementor_template_type', 'post' === $dst->post_type ? 'wp-post' : 'wp-page' );
+				update_post_meta( $to, '_elementor_version', defined( 'ELEMENTOR_VERSION' ) ? ELEMENTOR_VERSION : '4.3.4' );
+				delete_post_meta( $to, '_elementor_css' );
+				$check = (string) get_post_meta( $to, '_elementor_data', true );
+				$out['copied'] = strlen( $check );
+				$out['json_ok'] = is_array( json_decode( $check, true ) );
+				$out['roots']   = $out['json_ok'] ? count( json_decode( $check, true ) ) : 0;
+			}
+		}
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
