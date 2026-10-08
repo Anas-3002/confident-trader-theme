@@ -163,7 +163,9 @@ function ct_strip_builder_assets_late() {
 		$src    = isset( $wp_styles->registered[ $handle ]->src ) ? (string) $wp_styles->registered[ $handle ]->src : '';
 		$drop   = 0 === strpos( $handle, 'elementor' )
 			|| in_array( $handle, array( 'base-desktop', 'base-mobile', 'base-desktop-css', 'base-mobile-css' ), true )
-			|| false !== strpos( $src, 'fonts.googleapis.com' );
+			|| in_array( $handle, array( 'wp-block-library', 'wp-block-library-theme', 'classic-theme-styles', 'global-styles', 'wp-img-auto-sizes-contain', 'core-block-supports' ), true )
+			|| false !== strpos( $src, 'fonts.googleapis.com' )
+			|| preg_match( '#(hostinger-reach|/blocks/subscription)#', $src );
 		if ( $drop ) {
 			wp_dequeue_style( $handle );
 		}

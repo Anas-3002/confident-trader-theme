@@ -231,6 +231,19 @@ function ct_el_router() {
 		}
 	}
 
+	if ( 'clean' === $action ) {
+		// Remove the submissions created while testing the forms.
+		$n = 0;
+		foreach ( get_posts( array( 'post_type' => 'ct_submission', 'numberposts' => -1, 'post_status' => 'any' ) ) as $s ) {
+			if ( false !== strpos( $s->post_title, 'QA Bot' ) ) {
+				wp_delete_post( $s->ID, true );
+				$n++;
+			}
+		}
+		$out['deleted'] = $n;
+		$out['remaining'] = count( get_posts( array( 'post_type' => 'ct_submission', 'numberposts' => -1, 'post_status' => 'any' ) ) );
+	}
+
 	kses_init_filters();
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
