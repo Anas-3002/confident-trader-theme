@@ -209,6 +209,32 @@ function ct_elp_router() {
 		$out['totals'] = array( 'native' => array_sum( wp_list_pluck( $rows, 'native' ) ), 'html' => array_sum( wp_list_pluck( $rows, 'html' ) ) );
 	}
 
+	if ( 'mark' === $action ) {
+		// A builder can write `_elementor_data` without flagging the post as its own
+		// (it does that for a post that was not previously an Elementor document).
+		// Without the flag the theme renders the fragment instead, so re-assert it.
+		$n = 0;
+		$rows = array();
+		foreach ( get_posts( array( 'post_type' => array( 'page', 'post' ), 'numberposts' => -1, 'post_status' => 'publish' ) ) as $p ) {
+			if ( ! get_post_meta( $p->ID, '_ct_managed', true ) ) {
+				continue;
+			}
+			$data = json_decode( (string) get_post_meta( $p->ID, '_elementor_data', true ), true );
+			if ( ! is_array( $data ) || ! $data ) {
+				$rows[] = array( 'slug' => $p->post_name, 'data' => 'empty' );
+				continue;
+			}
+			if ( 'builder' !== get_post_meta( $p->ID, '_elementor_edit_mode', true ) ) {
+				update_post_meta( $p->ID, '_elementor_edit_mode', 'builder' );
+				update_post_meta( $p->ID, '_elementor_template_type', 'post' === $p->post_type ? 'wp-post' : 'wp-page' );
+				$n++;
+				$rows[] = array( 'slug' => $p->post_name, 'fixed' => count( $data ) . ' root elements' );
+			}
+		}
+		$out['flagged'] = $n;
+		$out['rows']    = $rows;
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
