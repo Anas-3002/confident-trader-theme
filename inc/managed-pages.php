@@ -96,13 +96,20 @@ function ct_guard_managed_elementor( $post_id, $post ) {
 	if ( ! get_post_meta( $post_id, '_ct_managed', true ) ) {
 		return;
 	}
+	// Only ever act on a page already flagged as a builder page. A builder writes
+	// `_elementor_data` and `_elementor_edit_mode` in separate steps, so deleting
+	// data whenever the flag looks absent destroys documents mid-write.
+	if ( 'builder' !== get_post_meta( $post_id, '_elementor_edit_mode', true ) ) {
+		return;
+	}
 	if ( ct_has_elementor_document( $post_id ) ) {
 		return;
 	}
-	foreach ( array( '_elementor_edit_mode', '_elementor_template_type' ) as $key ) {
-		delete_post_meta( $post_id, $key );
-	}
-	delete_post_meta( $post_id, '_elementor_data' );
+	// Flagged as a builder page but holding no document: drop the flag only, so the
+	// page falls back to the theme fragment instead of rendering a blank canvas.
+	// The data itself is left alone.
+	delete_post_meta( $post_id, '_elementor_edit_mode' );
+	delete_post_meta( $post_id, '_elementor_template_type' );
 }
 add_action( 'save_post', 'ct_guard_managed_elementor', 10, 2 );
 
