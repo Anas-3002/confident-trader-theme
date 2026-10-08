@@ -164,6 +164,22 @@ function ct_maint_router() {
 		$out['note'] = 'elementor meta cleared on all managed pages';
 	}
 
+	if ( 'simulate' === $action ) {
+		// Reproduce what a page builder does to a page, to prove the guard holds.
+		$slug = isset( $_GET['slug'] ) ? sanitize_title( wp_unslash( $_GET['slug'] ) ) : 'home'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$p    = get_page_by_path( $slug, OBJECT, array( 'page', 'post' ) );
+		if ( ! $p ) {
+			$out['error'] = 'no such page';
+		} else {
+			update_post_meta( $p->ID, '_elementor_edit_mode', 'builder' );
+			update_post_meta( $p->ID, '_elementor_data', '[{"id":"abc123","elType":"container","settings":[],"elements":[{"id":"def456","elType":"widget","widgetType":"heading","settings":{"title":"BROKEN CANVAS"}}]}]' );
+			update_post_meta( $p->ID, '_elementor_template_type', 'wp-page' );
+			update_post_meta( $p->ID, '_elementor_version', '4.3.4' );
+			$out['simulated'] = $slug . ' (id ' . $p->ID . ')';
+			$out['expect']    = 'the live page must still render the design, not the empty canvas';
+		}
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
