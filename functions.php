@@ -19,8 +19,7 @@ require_once get_template_directory() . '/inc/managed-pages.php';
 // inc/installer.php (one-time provisioning) is intentionally not shipped: the
 // build it performed is complete and the trigger should not exist in production.
 // Restore it from git history (commit 077d8cd) if the environment is ever rebuilt.
-// inc/maint.php is a TEMPORARY diagnostic/repair endpoint, removed after use.
-require_once get_template_directory() . '/inc/maint.php';
+// inc/maint.php was a temporary diagnostic/repair endpoint and has been removed.
 
 /**
  * Render the form markers that live inside stored page content.
