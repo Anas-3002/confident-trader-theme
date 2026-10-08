@@ -10,7 +10,8 @@
         "market profile",
         "market structure"
       ],
-      "words": 690
+      "words": 690,
+      "meta_description": "Auction market theory describes how price is discovered, not predicted. Balance, imbalance, acceptance, rejection and how to use them."
     },
     {
       "slug": "reading-dom-and-footprint-without-fooling-yourself",
@@ -22,7 +23,8 @@
         "footprint",
         "depth of market"
       ],
-      "words": 704
+      "words": 704,
+      "meta_description": "What depth of market and footprint charts can and cannot tell you, four order-flow readings that are usually wrong, and a workflow that holds up."
     },
     {
       "slug": "liquidity-sweeps-why-your-stop-is-the-liquidity",
@@ -34,7 +36,8 @@
         "stops",
         "market structure"
       ],
-      "words": 682
+      "words": 682,
+      "meta_description": "Why obvious levels get swept: resting stops are the liquidity. The three-part test for a genuine sweep, and how to place a stop structurally."
     },
     {
       "slug": "position-sizing-that-survives-drawdowns",
@@ -46,7 +49,8 @@
         "risk management",
         "kelly criterion"
       ],
-      "words": 749
+      "words": 749,
+      "meta_description": "Derive contract size from the stop rather than the feeling: sizing arithmetic, correlated exposure, fractional Kelly and daily loss limits."
     },
     {
       "slug": "how-prop-firm-evaluation-rules-work",
@@ -58,7 +62,8 @@
         "evaluation",
         "drawdown"
       ],
-      "words": 685
+      "words": 685,
+      "meta_description": "Trailing versus static drawdown, daily loss limits, consistency rules and news restrictions, and how each one changes how you should trade."
     },
     {
       "slug": "pre-market-preparation-checklist",
@@ -70,7 +75,8 @@
         "routine",
         "levels"
       ],
-      "words": 690
+      "words": 690,
+      "meta_description": "A fifteen-minute pre-market routine that produces three written scenarios, four levels and fixed risk numbers before the first tick prints."
     },
     {
       "slug": "why-lagging-indicators-lose-to-order-flow",
@@ -82,7 +88,8 @@
         "order flow",
         "methodology"
       ],
-      "words": 615
+      "words": 615,
+      "meta_description": "Every indicator is a transform of past price. What that means for timing, and what order flow measures that no oscillator can encode."
     },
     {
       "slug": "trade-journal-that-changes-behaviour",
@@ -94,7 +101,8 @@
         "psychology",
         "discipline"
       ],
-      "words": 633
+      "words": 633,
+      "meta_description": "A journal that actually changes behaviour scores process against a written plan, separates process from outcome, and targets the worst violation."
     }
   ],
   "categories": [

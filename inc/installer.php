@@ -300,6 +300,9 @@ function ct_build_content( &$result ) {
 			continue;
 		}
 		update_post_meta( $id, '_ct_managed', 1 );
+		if ( ! empty( $post['meta_description'] ) ) {
+			update_post_meta( $id, '_ct_meta_description', $post['meta_description'] );
+		}
 		if ( isset( $cat_ids[ $post['category'] ] ) ) {
 			wp_set_post_terms( $id, array( $cat_ids[ $post['category'] ] ), 'category', false );
 		}

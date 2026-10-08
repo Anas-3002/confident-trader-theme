@@ -68,6 +68,10 @@ function ct_is_indexable() {
 	if ( is_search() || is_404() || is_paged() ) {
 		return false;
 	}
+	// Tag archives are thin at this size; keep the links but keep them out of the index.
+	if ( is_tag() ) {
+		return false;
+	}
 	return (bool) get_option( 'blog_public' );
 }
 
