@@ -7,7 +7,7 @@
 
 get_header();
 ?>
-<main class="w-full pt-28 bg-background flex-1">
+<main id="ct-main" class="w-full pt-28 bg-background flex-1">
 	<div class="relative w-full overflow-hidden">
 		<?php get_template_part( 'template-parts/glows' ); ?>
 		<section class="max-w-7xl mx-auto px-margin py-space-xl relative z-10">

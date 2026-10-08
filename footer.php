@@ -69,3 +69,6 @@
 </footer>
 
 <?php get_template_part( 'template-parts/video-modal' ); ?>
+<?php wp_footer(); ?>
+</body>
+</html>

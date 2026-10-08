@@ -14,6 +14,19 @@ $ct_nav = array(
 	'/blog/'               => __( 'Insights', 'confident-trader' ),
 );
 
+<!DOCTYPE html>
+<html <?php language_attributes(); ?>>
+<head>
+	<meta charset="<?php bloginfo( 'charset' ); ?>">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="theme-color" content="#0a0d14">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+	<?php wp_head(); ?>
+</head>
+<body <?php body_class(); ?>>
+<?php wp_body_open(); ?>
+<a class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary-container focus:text-on-primary-container focus:font-bold" href="#ct-main"><?php esc_html_e( 'Skip to content', 'confident-trader' ); ?></a>
+<?php
 $ct_logo = ct_logo_svg( 'ctlg-h', 'h-8 w-8' );
 ?>
 <header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.4)]">
