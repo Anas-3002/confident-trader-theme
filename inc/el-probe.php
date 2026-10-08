@@ -219,12 +219,21 @@ function ct_elp_router() {
 			if ( ! get_post_meta( $p->ID, '_ct_managed', true ) ) {
 				continue;
 			}
+			// A stale edit lock makes the builder write to a revision instead of the
+			// post, so the document never lands. Clear it before anything else.
+			if ( get_post_meta( $p->ID, '_edit_lock', true ) ) {
+				delete_post_meta( $p->ID, '_edit_lock' );
+				$out['locks_cleared'] = ( $out['locks_cleared'] ?? 0 ) + 1;
+			}
 			$data = json_decode( (string) get_post_meta( $p->ID, '_elementor_data', true ), true );
 			if ( ! is_array( $data ) || ! $data ) {
 				$rows[] = array( 'slug' => $p->post_name, 'data' => 'empty' );
 				continue;
 			}
 			if ( 'builder' !== get_post_meta( $p->ID, '_elementor_edit_mode', true ) ) {
+				// A stale edit lock makes the builder write to a revision instead of
+				// the post, so the document never lands.
+				delete_post_meta( $p->ID, '_edit_lock' );
 				update_post_meta( $p->ID, '_elementor_edit_mode', 'builder' );
 				update_post_meta( $p->ID, '_elementor_template_type', 'post' === $p->post_type ? 'wp-post' : 'wp-page' );
 				$n++;
