@@ -15,7 +15,9 @@ define( 'CT_CONTENT_VERSION', '1.0.0' );
 require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/forms.php';
-require_once get_template_directory() . '/inc/installer.php';
+// inc/installer.php (one-time provisioning) is intentionally not shipped: the
+// build it performed is complete and the trigger should not exist in production.
+// Restore it from git history (commit 077d8cd) if the environment is ever rebuilt.
 
 /**
  * Render the form markers that live inside stored page content.
