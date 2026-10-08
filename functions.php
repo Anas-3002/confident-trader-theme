@@ -200,6 +200,27 @@ function ct_strip_stylesheet_tag( $tag, $handle, $href = '' ) {
 add_filter( 'style_loader_tag', 'ct_strip_stylesheet_tag', 10, 3 );
 
 /**
+ * Drop the resource hint for the plugin CDN we no longer load anything from.
+ *
+ * @param array  $hints Hints keyed by relation type.
+ * @param string $relation_type Relation type.
+ * @return array
+ */
+function ct_trim_resource_hints( $hints, $relation_type ) {
+	if ( is_admin() || ct_is_elementor_editor_request() ) {
+		return $hints;
+	}
+	foreach ( (array) $hints as $key => $hint ) {
+		$url = is_array( $hint ) && isset( $hint['href'] ) ? $hint['href'] : $hint;
+		if ( is_string( $url ) && false !== strpos( $url, 'cdn-reach.hostinger.com' ) ) {
+			unset( $hints[ $key ] );
+		}
+	}
+	return $hints;
+}
+add_filter( 'wp_resource_hints', 'ct_trim_resource_hints', 10, 2 );
+
+/**
  * Theme supports.
  */
 function ct_setup() {
