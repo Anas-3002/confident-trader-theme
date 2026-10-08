@@ -72,7 +72,10 @@ function ct_render_managed_fragment( $content ) {
 	if ( ! $path ) {
 		return $content;
 	}
-	return (string) file_get_contents( $path );
+	$html = (string) file_get_contents( $path );
+	// This filter is last, so anything the earlier content filters placed in the
+	// fragment (the form embeds) must be resolved here too.
+	return ct_render_form_markers( $html );
 }
 add_filter( 'the_content', 'ct_render_managed_fragment', 99 );
 
