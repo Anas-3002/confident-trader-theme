@@ -89,6 +89,46 @@ function ct_elp_router() {
 		$out['revoked'] = $n;
 	}
 
+	if ( 'media' === $action ) {
+		// Sideload the theme's design images into the media library so the client
+		// can manage/replace them from WordPress, and report url → attachment id.
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/media.php';
+		$map = array();
+		foreach ( (array) glob( get_template_directory() . '/assets/img/*' ) as $file ) {
+			$name = basename( $file );
+			$slug = sanitize_title( pathinfo( $name, PATHINFO_FILENAME ) );
+			$have = get_posts( array( 'post_type' => 'attachment', 'name' => $slug, 'numberposts' => 1, 'post_status' => 'inherit' ) );
+			if ( $have ) {
+				$map[ $name ] = array( 'id' => $have[0]->ID, 'url' => wp_get_attachment_url( $have[0]->ID ) );
+				continue;
+			}
+			$up  = wp_upload_bits( $name, null, (string) file_get_contents( $file ) );
+			if ( ! empty( $up['error'] ) ) {
+				$map[ $name ] = array( 'error' => $up['error'] );
+				continue;
+			}
+			$id = wp_insert_attachment(
+				array(
+					'post_mime_type' => $up['type'],
+					'post_title'     => $slug,
+					'post_content'   => '',
+					'post_status'    => 'inherit',
+				),
+				$up['file']
+			);
+			if ( is_wp_error( $id ) ) {
+				$map[ $name ] = array( 'error' => $id->get_error_message() );
+				continue;
+			}
+			wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $up['file'] ) );
+			update_post_meta( $id, '_wp_attachment_image_alt', 'Confident Trader — ' . str_replace( '-', ' ', $slug ) );
+			$map[ $name ] = array( 'id' => $id, 'url' => wp_get_attachment_url( $id ) );
+		}
+		$out['media'] = $map;
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
