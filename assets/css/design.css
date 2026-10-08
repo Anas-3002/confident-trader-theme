@@ -137,12 +137,12 @@ textarea.ct-input { min-height: 8rem; resize: vertical; }
 /* ----------------------------------------------------------- prose layer -- */
 .ct-prose { color: #94a3b8; font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 17px; line-height: 1.72; }
 .ct-prose > * + * { margin-top: 1.1em; }
-/* An article body is an Elementor document now. Elementor 4 renders the HTML
-   widget's markup straight into the widget element (no .elementor-widget-container),
-   so the sibling rhythm has to be re-asserted there. :where() keeps the
-   specificity identical to `.ct-prose > * + *`, so the prose's own heading and
-   block rules still win exactly as they do when the markup is not wrapped. */
-.ct-prose :where(.elementor-widget-html) > :where(* + *) { margin-top: 1.1em; }
+/* An article body is an Elementor document now: the builder's own wrappers sit
+   between .ct-prose and the markup, so the sibling rhythm is re-asserted one
+   level down. :where() keeps the specificity identical to the rule above, so the
+   prose's own heading and block rules still win exactly as before. */
+.ct-prose :where(.elementor) > :where(* + *),
+.ct-prose :where(.elementor) :where(.e-con, .e-flexbox, .e-grid, .e-div-block, .elementor-widget-html) > :where(* + *) { margin-top: 1.1em; }
 .ct-prose h2 {
   color: var(--ct-text-primary);
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
