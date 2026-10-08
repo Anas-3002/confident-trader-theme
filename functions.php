@@ -140,6 +140,38 @@ function ct_dequeue_elementor_on_theme_pages() {
 add_action( 'wp_enqueue_scripts', 'ct_dequeue_elementor_on_theme_pages', 99 );
 
 /**
+ * Second, late pass over the builder's assets — on the public site only.
+ *
+ * Elementor registers some of its stylesheets (its generated base CSS, and the
+ * Google Fonts the default kit asks for) after wp_enqueue_scripts has run, so a
+ * prefix dequeue there misses them. Nothing here is used by the design, and the
+ * fonts are self-hosted, so dropping them also removes several external requests.
+ */
+function ct_strip_builder_assets_late() {
+	if ( is_admin() && ! isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+	if ( ct_is_elementor_editor_request() ) {
+		return;
+	}
+	global $wp_styles;
+	if ( ! $wp_styles instanceof WP_Styles || empty( $wp_styles->queue ) ) {
+		return;
+	}
+	foreach ( (array) $wp_styles->queue as $handle ) {
+		$handle = (string) $handle;
+		$src    = isset( $wp_styles->registered[ $handle ]->src ) ? (string) $wp_styles->registered[ $handle ]->src : '';
+		$drop   = 0 === strpos( $handle, 'elementor' )
+			|| in_array( $handle, array( 'base-desktop', 'base-mobile', 'base-desktop-css', 'base-mobile-css' ), true )
+			|| false !== strpos( $src, 'fonts.googleapis.com' );
+		if ( $drop ) {
+			wp_dequeue_style( $handle );
+		}
+	}
+}
+add_action( 'wp_print_styles', 'ct_strip_builder_assets_late', 1 );
+
+/**
  * Theme supports.
  */
 function ct_setup() {
