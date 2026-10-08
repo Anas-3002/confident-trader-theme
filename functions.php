@@ -41,6 +41,47 @@ function ct_render_form_markers( $content ) {
 add_filter( 'the_content', 'ct_render_form_markers', 8 );
 
 /**
+ * Trim WordPress/plugin front-end CSS that this theme does not use.
+ *
+ * The design pages are raw design markup (no core blocks), so the block library,
+ * classic theme styles and the merged global stylesheet are dead weight: measured
+ * at 989 + 94 + 76 rules before this filter.
+ */
+function ct_trim_frontend_css() {
+	if ( is_admin() ) {
+		return;
+	}
+	foreach ( array(
+		'wp-block-library',
+		'wp-block-library-theme',
+		'classic-theme-styles',
+		'global-styles',
+		'wp-img-auto-sizes-contain',
+		'core-block-supports',
+	) as $handle ) {
+		wp_dequeue_style( $handle );
+		wp_deregister_style( $handle );
+	}
+
+	// Third-party plugin sheets that ship a global stylesheet on every page.
+	global $wp_styles;
+	if ( ! $wp_styles instanceof WP_Styles ) {
+		return;
+	}
+	foreach ( (array) $wp_styles->registered as $handle => $style ) {
+		$src = isset( $style->src ) ? (string) $style->src : '';
+		if ( '' === $src ) {
+			continue;
+		}
+		if ( preg_match( '#(hostinger-reach|/blocks/subscription|elementor-frontend|elementor-icons)#', $src ) ) {
+			wp_dequeue_style( $handle );
+			wp_deregister_style( $handle );
+		}
+	}
+}
+add_action( 'wp_enqueue_scripts', 'ct_trim_frontend_css', 100 );
+
+/**
  * Elementor ships its front-end framework on every request. The design pages are
  * rendered by this theme, so drop Elementor's assets there and keep the payload
  * for pages that actually contain an Elementor document.
