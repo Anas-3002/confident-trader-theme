@@ -154,11 +154,6 @@ function ct_build_plugins( &$result ) {
 			$upgrader = new Plugin_Upgrader( $skin );
 			$done     = $upgrader->install( $api->download_link );
 			$result['log'][] = "$slug: install " . ( is_wp_error( $done ) ? $done->get_error_message() : ( $done ? 'ok' : 'failed' ) );
-			if ( $skin->get_errors() && is_wp_error( $skin->get_errors() ) ) {
-				foreach ( $skin->get_errors()->get_error_messages() as $msg ) {
-					$result['log'][] = "  skin: $msg";
-				}
-			}
 			$file = ct_plugin_file( $slug );
 		}
 		if ( $file ) {
