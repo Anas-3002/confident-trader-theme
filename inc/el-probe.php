@@ -235,6 +235,28 @@ function ct_elp_router() {
 		$out['rows']    = $rows;
 	}
 
+	if ( 'raw' === $action ) {
+		// Dump the raw document meta for one slug: length, flag, and the head of the
+		// stored JSON, to tell "never written" apart from "written but unreadable".
+		$slug = isset( $_GET['slug'] ) ? sanitize_title( wp_unslash( $_GET['slug'] ) ) : 'home'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$p    = get_page_by_path( $slug, OBJECT, array( 'page', 'post' ) );
+		if ( ! $p ) {
+			$out['error'] = 'no such page';
+		} else {
+			$raw = (string) get_post_meta( $p->ID, '_elementor_data', true );
+			$out['id']         = $p->ID;
+			$out['len']        = strlen( $raw );
+			$out['head']       = substr( $raw, 0, 220 );
+			$out['mode']       = get_post_meta( $p->ID, '_elementor_edit_mode', true );
+			$out['type']       = get_post_meta( $p->ID, '_elementor_template_type', true );
+			$out['version']    = get_post_meta( $p->ID, '_elementor_version', true );
+			$out['json_ok']    = is_array( json_decode( $raw, true ) );
+			$out['json_uns']   = is_array( json_decode( wp_unslash( $raw ), true ) );
+			$out['managed']    = (bool) get_post_meta( $p->ID, '_ct_managed', true );
+			$out['all_meta']   = array_keys( get_post_meta( $p->ID ) );
+		}
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
