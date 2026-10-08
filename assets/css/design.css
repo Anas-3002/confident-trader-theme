@@ -211,10 +211,10 @@ textarea.ct-input { min-height: 8rem; resize: vertical; }
    and Elementor's framework CSS is dropped on the public site. Nothing here may
    therefore override a design utility class: with native elements every container
    carries `.e-con` and `.elementor-element`, so scoping is essential — an
-   unscoped `.ct-site .e-con { padding: 0 }` silently kills every padding utility
-   on the page. These rules only handle the classic HTML-widget escape hatch. */
-.ct-site .elementor-widget-html { width: 100%; }
-.ct-site .elementor-widget-html > .elementor-widget-container { width: 100%; }
+   unscoped `.ct-site .e-con { padding: 0 }` silently kills every padding utility,
+   and a `.elementor-widget-html { width: 100% }` turns each inline HTML-widget
+   into a full-width flex item that squeezes its siblings.
+   Only the builder's own wrapper spacing is neutralised here. */
 .ct-site .elementor-widget-html:not(:last-child) { margin-block-end: 0; }
 .ct-site .elementor-widget-html > .elementor-widget-container > section,
 .ct-site .elementor-widget-html > .elementor-widget-container > p { margin-top: 0; margin-bottom: 0; }
