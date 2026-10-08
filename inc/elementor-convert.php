@@ -216,6 +216,21 @@ function ct_el_router() {
 		}
 	}
 
+	if ( 'blank' === $action ) {
+		// Simulate "the client deleted every section in Elementor" on one page:
+		// the page must fall back to the design, never publish a blank canvas.
+		$slug = isset( $_GET['slug'] ) ? sanitize_title( wp_unslash( $_GET['slug'] ) ) : 'home'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$p    = get_page_by_path( $slug, OBJECT, array( 'page', 'post' ) );
+		if ( ! $p ) {
+			$out['error'] = 'no such page';
+		} else {
+			update_post_meta( $p->ID, '_elementor_edit_mode', 'builder' );
+			update_post_meta( $p->ID, '_elementor_data', '[]' );
+			$out['blanked'] = $slug . ' (id ' . $p->ID . ')';
+			$out['expect']  = 'the live page must still render the original design';
+		}
+	}
+
 	kses_init_filters();
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
