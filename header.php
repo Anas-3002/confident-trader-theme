@@ -13,7 +13,7 @@ $ct_nav = array(
 	'/pricing/'            => __( 'Pricing', 'confident-trader' ),
 	'/blog/'               => __( 'Insights', 'confident-trader' ),
 );
-
+?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
