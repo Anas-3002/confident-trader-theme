@@ -32,7 +32,28 @@ function ct_fragment_path( $slug, $post_type = 'page' ) {
 }
 
 /**
- * Render managed content from the version-controlled fragment.
+ * True when the post carries a usable Elementor document.
+ *
+ * A page builder flagged as `builder` but holding no document renders a blank
+ * canvas, which is what breaks the layout — so an empty document never counts.
+ *
+ * @param int $post_id Post id.
+ * @return bool
+ */
+function ct_has_elementor_document( $post_id ) {
+	if ( 'builder' !== get_post_meta( $post_id, '_elementor_edit_mode', true ) ) {
+		return false;
+	}
+	$data = json_decode( (string) get_post_meta( $post_id, '_elementor_data', true ), true );
+	return is_array( $data ) && count( $data ) > 0;
+}
+
+/**
+ * Render managed content.
+ *
+ * If the page is a real Elementor document, Elementor renders it and this filter
+ * stays out of the way. Otherwise the page renders from the version-controlled
+ * fragment, so no editor, plugin or builder can ever blank it.
  *
  * Runs late so it also overrides a page builder's own the_content filter.
  *
@@ -44,6 +65,9 @@ function ct_render_managed_fragment( $content ) {
 	if ( ! $post || ! get_post_meta( $post->ID, '_ct_managed', true ) ) {
 		return $content;
 	}
+	if ( ct_has_elementor_document( $post->ID ) ) {
+		return $content;
+	}
 	$path = ct_fragment_path( $post->post_name, $post->post_type );
 	if ( ! $path ) {
 		return $content;
@@ -53,26 +77,31 @@ function ct_render_managed_fragment( $content ) {
 add_filter( 'the_content', 'ct_render_managed_fragment', 99 );
 
 /**
- * Never let Elementor adopt a managed page.
+ * Never leave a managed page flagged as a builder page without a document.
  *
- * Elementor marks a post as its own with `_elementor_edit_mode`; on a managed
- * page that flag replaces the body with an (empty) builder canvas.
+ * Deleting every element in Elementor is a legitimate action, but it would leave
+ * a blank canvas on a page whose design is fixed — so the flag is dropped and the
+ * theme fragment renders again.
  *
  * @param int     $post_id Post id.
  * @param WP_Post $post    Post object.
  */
-function ct_strip_elementor_on_managed( $post_id, $post ) {
+function ct_guard_managed_elementor( $post_id, $post ) {
 	if ( wp_is_post_revision( $post_id ) || ! $post instanceof WP_Post ) {
 		return;
 	}
 	if ( ! get_post_meta( $post_id, '_ct_managed', true ) ) {
 		return;
 	}
-	foreach ( array( '_elementor_edit_mode', '_elementor_data', '_elementor_template_type', '_elementor_version', '_elementor_page_settings', '_elementor_css' ) as $key ) {
+	if ( ct_has_elementor_document( $post_id ) ) {
+		return;
+	}
+	foreach ( array( '_elementor_edit_mode', '_elementor_template_type' ) as $key ) {
 		delete_post_meta( $post_id, $key );
 	}
+	delete_post_meta( $post_id, '_elementor_data' );
 }
-add_action( 'save_post', 'ct_strip_elementor_on_managed', 10, 2 );
+add_action( 'save_post', 'ct_guard_managed_elementor', 10, 2 );
 
 /**
  * Keep the block editor away from managed pages.
@@ -105,10 +134,10 @@ function ct_managed_admin_notice() {
 		return;
 	}
 	printf(
-		'<div class="notice notice-warning"><p><strong>%s</strong> %s</p><p>%s</p></div>',
-		esc_html__( 'This page is a design template.', 'confident-trader' ),
-		esc_html__( 'Its markup lives in the theme (inc/content/) and is rendered from there, so editing the text below will not change the live site — and saving here cannot break the layout either.', 'confident-trader' ),
-		esc_html__( 'To change wording on this page, ask your developer: it is a one-line change in the theme, and it survives every future update.', 'confident-trader' )
+		'<div class="notice notice-info"><p><strong>%s</strong> %s</p><p>%s</p></div>',
+		esc_html__( 'This page is built in Elementor.', 'confident-trader' ),
+		esc_html__( 'Each design section is one Elementor container holding a single HTML widget. Use “Edit with Elementor” to open it: you can edit a section’s markup inside its HTML widget, reorder or hide sections, and add your own sections and widgets around them.', 'confident-trader' ),
+		esc_html__( 'The design’s styling comes from the theme, so keep the existing class names inside a widget if you edit its markup. Deleting every section reverts the page to the original design rather than publishing a blank page.', 'confident-trader' )
 	);
 }
 add_action( 'admin_notices', 'ct_managed_admin_notice' );

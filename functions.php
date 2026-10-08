@@ -16,6 +16,7 @@ require_once get_template_directory() . '/inc/helpers.php';
 require_once get_template_directory() . '/inc/seo.php';
 require_once get_template_directory() . '/inc/forms.php';
 require_once get_template_directory() . '/inc/managed-pages.php';
+require_once get_template_directory() . '/inc/elementor-convert.php'; // TEMP build tool, removed after conversion.
 // inc/installer.php (one-time provisioning) is intentionally not shipped: the
 // build it performed is complete and the trigger should not exist in production.
 // Restore it from git history (commit 077d8cd) if the environment is ever rebuilt.
@@ -42,7 +43,26 @@ function ct_render_form_markers( $content ) {
 		$content
 	);
 }
-add_filter( 'the_content', 'ct_render_form_markers', 8 );
+add_filter( 'the_content', 'ct_render_form_markers', 20 );
+
+/**
+ * True while Elementor is rendering its editor or preview.
+ *
+ * The design pages are Elementor documents now, so in the editor we let the
+ * builder load its own assets (that is what the editor expects); on the public
+ * site its framework is dropped because the design needs none of it.
+ *
+ * @return bool
+ */
+function ct_is_elementor_editor_request() {
+	if ( isset( $_GET['elementor-preview'] ) || ( isset( $_GET['action'] ) && 'elementor' === $_GET['action'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return true;
+	}
+	if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->editor ) && \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
+		return true;
+	}
+	return false;
+}
 
 /**
  * Trim WordPress/plugin front-end CSS that this theme does not use.
@@ -72,9 +92,13 @@ function ct_trim_frontend_css() {
 	if ( ! $wp_styles instanceof WP_Styles ) {
 		return;
 	}
+	$keep_builder = ct_is_elementor_editor_request();
 	foreach ( (array) $wp_styles->registered as $handle => $style ) {
 		$src = isset( $style->src ) ? (string) $style->src : '';
 		if ( '' === $src ) {
+			continue;
+		}
+		if ( $keep_builder && preg_match( '#(elementor-frontend|elementor-icons)#', $src ) ) {
 			continue;
 		}
 		if ( preg_match( '#(hostinger-reach|/blocks/subscription|elementor-frontend|elementor-icons)#', $src ) ) {
@@ -86,26 +110,31 @@ function ct_trim_frontend_css() {
 add_action( 'wp_enqueue_scripts', 'ct_trim_frontend_css', 100 );
 
 /**
- * Elementor ships its front-end framework on every request. The design pages are
- * rendered by this theme, so drop Elementor's assets there and keep the payload
- * for pages that actually contain an Elementor document.
+ * Drop Elementor's front-end framework from the public site.
+ *
+ * Every design page is an Elementor document built from HTML widgets, so none of
+ * Elementor's own CSS or JS is needed to render them — and all of it would fight
+ * the design's compiled CSS. It is kept for the editor and preview, where the
+ * builder expects its own assets.
  */
 function ct_dequeue_elementor_on_theme_pages() {
-	if ( is_admin() || ! is_singular() ) {
+	if ( is_admin() && ! isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		return;
 	}
-	$post = get_post();
-	if ( ! $post ) {
+	if ( ct_is_elementor_editor_request() ) {
 		return;
 	}
-	// Only intervene when the post has no Elementor document of its own.
-	$built = get_post_meta( $post->ID, '_elementor_edit_mode', true );
-	if ( 'builder' === $built ) {
-		return;
-	}
-	foreach ( array( 'elementor-frontend', 'elementor-frontend-css', 'elementor-icons', 'elementor-animations' ) as $handle ) {
-		wp_dequeue_style( $handle );
-		wp_dequeue_script( $handle );
+	global $wp_styles, $wp_scripts;
+	foreach ( array( $wp_styles, $wp_scripts ) as $collection ) {
+		if ( ! $collection || empty( $collection->queue ) ) {
+			continue;
+		}
+		foreach ( (array) $collection->queue as $handle ) {
+			if ( 0 === strpos( (string) $handle, 'elementor' ) ) {
+				wp_dequeue_style( $handle );
+				wp_dequeue_script( $handle );
+			}
+		}
 	}
 }
 add_action( 'wp_enqueue_scripts', 'ct_dequeue_elementor_on_theme_pages', 99 );
