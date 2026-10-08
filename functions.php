@@ -174,6 +174,30 @@ function ct_strip_builder_assets_late() {
 add_action( 'wp_print_styles', 'ct_strip_builder_assets_late', 1 );
 
 /**
+ * Final backstop: drop those stylesheets at the point the <link> is printed.
+ *
+ * Some plugins enqueue their block stylesheet during wp_head, after every
+ * dequeue hook has run, so the queue is no longer the place to intercept them.
+ *
+ * @param string $tag    Link tag markup.
+ * @param string $handle Style handle.
+ * @param string $href   Style URL.
+ * @return string
+ */
+function ct_strip_stylesheet_tag( $tag, $handle, $href = '' ) {
+	if ( is_admin() || ct_is_elementor_editor_request() ) {
+		return $tag;
+	}
+	$handle = (string) $handle;
+	$href   = (string) $href;
+	$drop   = 0 === strpos( $handle, 'elementor' )
+		|| in_array( $handle, array( 'base-desktop', 'base-mobile', 'base-desktop-css', 'base-mobile-css', 'wp-block-library', 'wp-block-library-theme', 'classic-theme-styles', 'global-styles', 'wp-img-auto-sizes-contain', 'core-block-supports' ), true )
+		|| preg_match( '#(fonts\.googleapis\.com|hostinger-reach|/blocks/subscription|elementor-frontend|elementor-icons|base-(desktop|mobile)\.css)#', $href );
+	return $drop ? '' : $tag;
+}
+add_filter( 'style_loader_tag', 'ct_strip_stylesheet_tag', 10, 3 );
+
+/**
  * Theme supports.
  */
 function ct_setup() {
