@@ -213,9 +213,14 @@ textarea.ct-input { min-height: 8rem; resize: vertical; }
    carries `.e-con` and `.elementor-element`, so scoping is essential — an
    unscoped `.ct-site .e-con { padding: 0 }` silently kills every padding utility,
    and a `.elementor-widget-html { width: 100% }` turns each inline HTML-widget
-   into a full-width flex item that squeezes its siblings.
-   Only the builder's own wrapper spacing is neutralised here. */
+   into a full-width flex item that squeezes its siblings. */
 .ct-site .elementor-widget-html:not(:last-child) { margin-block-end: 0; }
+/* The classic HTML widget is the escape hatch for the few elements atomic props
+   cannot carry (lists, inline SVG, JS-wired accordions, form embeds). Its wrapper
+   must not introduce a box of its own, or an inline element inside a flex row
+   becomes a block — `display: contents` makes the wrapped markup behave exactly
+   like the design's own element. */
+.ct-site .elementor-widget-html { display: contents; }
 .ct-site .elementor-widget-html > .elementor-widget-container > section,
 .ct-site .elementor-widget-html > .elementor-widget-container > p { margin-top: 0; margin-bottom: 0; }
 /* `.elementor img { height: auto }` (0,1,1) outranks the design's height
