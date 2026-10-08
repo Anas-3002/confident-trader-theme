@@ -105,6 +105,65 @@ function ct_maint_router() {
 		$out['theme_after'] = get_option( 'stylesheet' );
 	}
 
+	if ( 'words' === $action ) {
+		$slug = isset( $_GET['slug'] ) ? sanitize_title( wp_unslash( $_GET['slug'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$p    = get_page_by_path( $slug, OBJECT, array( 'page', 'post' ) );
+		if ( ! $p ) {
+			$out['error'] = 'no such page';
+		} else {
+			$stored = wp_strip_all_tags( strip_shortcodes( $p->post_content ) );
+			$stored = trim( preg_replace( '/\s+/', ' ', $stored ) );
+			$frag   = get_template_directory() . '/inc/content/pages/' . $slug . '.html';
+			$ship   = file_exists( $frag ) ? trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( (string) file_get_contents( $frag ) ) ) ) : '';
+			$out['slug']        = $slug;
+			$out['stored_text'] = substr( $stored, 0, 4000 );
+			$out['has_40']      = preg_match_all( '/\b40\b/', $stored );
+			$out['has_40_ship'] = preg_match_all( '/\b40\b/', $ship );
+			$out['stored_words'] = str_word_count( $stored );
+			$out['ship_words']   = str_word_count( $ship );
+		}
+	}
+
+	if ( 'restore' === $action ) {
+		// Re-write every managed page/post from the fragments shipped in the theme.
+		// kses must be off: without unfiltered_html WordPress strips attributes such
+		// as img decoding="async" and escapes entities inside comments.
+		$out['restored'] = array();
+		kses_remove_filters();
+		remove_filter( 'content_save_pre', 'wp_filter_post_kses' );
+		remove_filter( 'content_filtered_save_pre', 'wp_filter_post_kses' );
+
+		foreach ( get_posts( array( 'post_type' => array( 'page', 'post' ), 'numberposts' => -1, 'post_status' => 'any' ) ) as $p ) {
+			if ( ! get_post_meta( $p->ID, '_ct_managed', true ) ) {
+				continue;
+			}
+			$frag = get_template_directory() . '/inc/content/pages/' . $p->post_name . '.html';
+			if ( ! file_exists( $frag ) ) {
+				$frag = get_template_directory() . '/inc/content/posts/' . $p->post_name . '.html';
+			}
+			if ( ! file_exists( $frag ) ) {
+				$out['restored'][] = array( 'slug' => $p->post_name, 'skipped' => 'no fragment' );
+				continue;
+			}
+			$before = get_post_field( 'post_content', $p->ID, 'raw' );
+			$after  = (string) file_get_contents( $frag );
+			if ( trim( $before ) !== trim( $after ) ) {
+				wp_update_post( array( 'ID' => $p->ID, 'post_content' => $after ) );
+			}
+			// Elementor must never take over a page the theme renders.
+			foreach ( array( '_elementor_edit_mode', '_elementor_data', '_elementor_template_type', '_elementor_version', '_elementor_page_settings', '_elementor_css' ) as $key ) {
+				delete_post_meta( $p->ID, $key );
+			}
+			$out['restored'][] = array(
+				'slug'   => $p->post_name,
+				'before' => strlen( (string) $before ),
+				'after'  => strlen( (string) get_post_field( 'post_content', $p->ID, 'raw' ) ),
+			);
+		}
+		kses_init_filters();
+		$out['note'] = 'elementor meta cleared on all managed pages';
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
