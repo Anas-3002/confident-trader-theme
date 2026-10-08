@@ -147,7 +147,22 @@ function ct_elp_router() {
 	if ( 'regen' === $action ) {
 		// Elementor's per-document CSS files can go missing while the <link> tag
 		// keeps being emitted (a 404 stylesheet = the per-element styles silently
-		// vanish). Clearing the marker meta forces a rebuild on the next render.
+		// vanish). Recreate the directory, then clear the marker meta so the next
+		// render rebuilds the files.
+		$up   = wp_upload_dir();
+		$dir  = trailingslashit( $up['basedir'] ) . 'elementor/css';
+		$out['css_dir']      = $dir;
+		$out['dir_exists']   = is_dir( $dir );
+		if ( ! is_dir( $dir ) ) {
+			wp_mkdir_p( $dir );
+			$out['dir_created'] = is_dir( $dir );
+		}
+		if ( is_dir( $dir ) ) {
+			@chmod( $dir, 0755 ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+			$out['writable'] = wp_is_writable( $dir );
+			$out['files']    = count( (array) glob( $dir . '/*.css' ) );
+		}
+		$out['print_method'] = get_option( 'elementor_css_print_method' );
 		$n = 0;
 		foreach ( get_posts( array( 'post_type' => array( 'page', 'post' ), 'numberposts' => -1, 'post_status' => 'publish' ) ) as $p ) {
 			if ( get_post_meta( $p->ID, '_ct_managed', true ) ) {
