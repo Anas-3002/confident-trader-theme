@@ -34,6 +34,28 @@ body.ct-site { overflow-x: clip; }
   border-radius: 2px;
 }
 
+/* --------------------------------------------------------- icon font base --
+   In the Stitch export Tailwind's utilities are emitted inside a cascade layer,
+   so the unlayered Material Symbols stylesheet wins and every icon renders at
+   24px no matter which `text-*` size utility sits next to it. Loading this rule
+   after the compiled Tailwind sheet reproduces that behaviour 1:1. */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: normal;
+}
+
 /* ---------------------------------------------------------------- forms -- */
 .ct-form {
   display: grid;
