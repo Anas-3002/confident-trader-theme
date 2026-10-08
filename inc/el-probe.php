@@ -144,6 +144,56 @@ function ct_elp_router() {
 		}
 	}
 
+	if ( 'regen' === $action ) {
+		// Elementor's per-document CSS files can go missing while the <link> tag
+		// keeps being emitted (a 404 stylesheet = the per-element styles silently
+		// vanish). Clearing the marker meta forces a rebuild on the next render.
+		$n = 0;
+		foreach ( get_posts( array( 'post_type' => array( 'page', 'post' ), 'numberposts' => -1, 'post_status' => 'publish' ) ) as $p ) {
+			if ( get_post_meta( $p->ID, '_ct_managed', true ) ) {
+				delete_post_meta( $p->ID, '_elementor_css' );
+				$n++;
+			}
+		}
+		if ( class_exists( '\Elementor\Plugin' ) ) {
+			\Elementor\Plugin::$instance->files_manager->clear_cache();
+		}
+		$out['cleared'] = $n;
+	}
+
+	if ( 'native' === $action ) {
+		// Which managed posts are real Elementor documents right now.
+		$rows = array();
+		foreach ( get_posts( array( 'post_type' => array( 'page', 'post' ), 'numberposts' => -1, 'post_status' => 'publish' ) ) as $p ) {
+			if ( ! get_post_meta( $p->ID, '_ct_managed', true ) ) {
+				continue;
+			}
+			$data = json_decode( (string) get_post_meta( $p->ID, '_elementor_data', true ), true );
+			$c = is_array( $data ) ? count( $data ) : 0;
+			$types = array();
+			if ( is_array( $data ) ) {
+				$walk = function ( $nodes ) use ( &$walk, &$types ) {
+					foreach ( $nodes as $n ) {
+						$types[ $n['widgetType'] ?? $n['elType'] ] = ( $types[ $n['widgetType'] ?? $n['elType'] ] ?? 0 ) + 1;
+						if ( ! empty( $n['elements'] ) ) {
+							$walk( $n['elements'] );
+						}
+					}
+				};
+				$walk( $data );
+			}
+			$native = 0;
+			foreach ( $types as $t => $cnt ) {
+				if ( 0 === strpos( (string) $t, 'e-' ) ) {
+					$native += $cnt;
+				}
+			}
+			$rows[] = array( 'slug' => $p->post_name, 'id' => $p->ID, 'roots' => $c, 'native' => $native, 'html' => $types['html'] ?? 0, 'built' => 'builder' === get_post_meta( $p->ID, '_elementor_edit_mode', true ) );
+		}
+		$out['rows'] = $rows;
+		$out['totals'] = array( 'native' => array_sum( wp_list_pluck( $rows, 'native' ) ), 'html' => array_sum( wp_list_pluck( $rows, 'html' ) ) );
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
