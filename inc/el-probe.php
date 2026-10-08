@@ -129,6 +129,21 @@ function ct_elp_router() {
 		$out['media'] = $map;
 	}
 
+	if ( 'unbuild' === $action ) {
+		// Roll a page back to the theme fragment (the verified design) by removing
+		// its Elementor document. Used while iterating on the native conversion.
+		$slug = isset( $_GET['slug'] ) ? sanitize_title( wp_unslash( $_GET['slug'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$p    = get_page_by_path( $slug, OBJECT, array( 'page', 'post' ) );
+		if ( ! $p ) {
+			$out['error'] = 'no such page';
+		} else {
+			foreach ( array( '_elementor_edit_mode', '_elementor_data', '_elementor_template_type', '_elementor_version', '_elementor_css' ) as $key ) {
+				delete_post_meta( $p->ID, $key );
+			}
+			$out['unbuilt'] = $slug . ' (id ' . $p->ID . ') -> renders from the theme fragment';
+		}
+	}
+
 	header( 'Content-Type: application/json; charset=utf-8' );
 	echo wp_json_encode( $out, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 	exit;
