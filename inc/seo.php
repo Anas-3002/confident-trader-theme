@@ -31,8 +31,27 @@ function ct_meta_description() {
 			}
 		}
 	}
-	if ( is_home() || is_category() || is_tag() ) {
+	if ( is_home() ) {
 		return __( 'Institutional order-flow research, auction-market theory and risk-management notes from the Confident Trader live desk.', 'confident-trader' );
+	}
+	if ( is_category() || is_tag() ) {
+		$term = get_queried_object();
+		if ( $term && ! empty( $term->description ) ) {
+			return wp_strip_all_tags( $term->description );
+		}
+		$name  = $term ? $term->name : __( 'Insights', 'confident-trader' );
+		$count = $term ? (int) $term->count : 0;
+		/* translators: 1: number of articles, 2: topic name. */
+		return sprintf(
+			_n(
+				'%1$d Confident Trader article filed under %2$s: order-flow research, auction market theory and desk field notes.',
+				'%1$d Confident Trader articles filed under %2$s: order-flow research, auction market theory and desk field notes.',
+				max( 1, $count ),
+				'confident-trader'
+			),
+			$count,
+			$name
+		);
 	}
 	if ( is_search() ) {
 		/* translators: %s: search query. */
