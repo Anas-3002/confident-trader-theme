@@ -473,7 +473,14 @@ function ct_build_options( &$result ) {
 	update_option( 'elementor_disable_color_schemes', 'yes' );
 	update_option( 'elementor_disable_typography_schemes', 'yes' );
 	update_option( 'elementor_cpt_support', array( 'page', 'post' ) );
+
+	// Elementor 4 site MCP exposure (McpSettingsController::OPTION_NAME) plus the
+	// atomic experiments the official MCP server requires.
+	update_option( 'elementor_mcp_enabled', true );
 	update_option( 'elementor_experiment-e_atomic_elements', 'active' );
+	update_option( 'elementor_experiment-e_opt_in_v4', 'active' );
+	update_option( 'elementor_experiment-e_classes', 'active' );
+	$result['log'][] = 'elementor: mcp_enabled=' . var_export( (bool) get_option( 'elementor_mcp_enabled' ), true );
 
 	flush_rewrite_rules( true );
 	$result['log'][] = 'rewrite rules flushed';
