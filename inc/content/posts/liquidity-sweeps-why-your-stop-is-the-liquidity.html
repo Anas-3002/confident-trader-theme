@@ -1,0 +1,29 @@
+<p>If you trade with a stop, your stop is an order in the book. Cluster enough stops at a level and that level becomes a pool of resting orders — and a pool of resting orders is exactly what a large participant needs in order to fill a position without moving price against themselves.</p>
+<p>This is the mechanical reason obvious levels get swept, and it has nothing to do with anyone targeting you personally.</p>
+<h2>Why obvious levels are obvious to everyone</h2>
+<p>Equal highs, prior session extremes, round numbers, the previous day's low, the obvious trendline: these are the places conventional practice puts stops. That makes them the places where resting liquidity accumulates most predictably.</p>
+<p>The consequence is a well-known asymmetry. Price often travels <em>through</em> such a level, triggers the resting orders, and then reverses — not because of magic, but because the triggered stops supplied the liquidity that the move needed. Once that fuel is consumed, there is nothing left pushing price in that direction.</p>
+<h2>The three-part test for a genuine sweep</h2>
+<p>Calling every wick a liquidity sweep is a way of never being wrong. Use a test instead:</p>
+<ol>
+<li><strong>Was there a level with a plausible reason for stops?</strong> Prior extreme, equal highs or lows, session open, or the obvious round number. A wick in the middle of nowhere is not a sweep.</li>
+<li><strong>Did price actually trade through it and fail to hold?</strong> A sweep requires traversal plus rejection. Touching a level and reversing immediately is not the same event.</li>
+<li><strong>Was the reversal followed by acceptance elsewhere?</strong> After the sweep, the market should begin to build value away from the swept level. Without that, you are looking at an ordinary retest.</li>
+</ol>
+<p>If all three are true, the sweep is a legitimate input. If only the first is true, you have a narrative.</p>
+<h2>What to do differently</h2>
+<h3>Stop placement</h3>
+<p>Placing a stop at the level everyone else uses guarantees you are part of the pool. Placing it <em>structurally</em> — where the idea is genuinely invalidated rather than where the crowd is — usually means a wider stop and a smaller size. That is the correct trade-off: you are paying in position size for a stop that survives normal market behaviour.</p>
+<p>Some traders place stops beyond a level by a distance proportional to the instrument's recent range rather than by a fixed tick count. The principle is sound: the stop should sit outside the noise of the instrument you are actually trading. The specific multiple is yours to calibrate against your own journal.</p>
+<h3>Entry timing</h3>
+<p>If you believe a level is likely to be swept, waiting for the sweep rather than anticipating it converts a guess into an observation. You give up some of the move and gain a factual event to trade against.</p>
+<h3>Size</h3>
+<p>A wider structural stop is only safe if your size is derived from it. If you widen the stop and keep the same contract count, you have simply increased your risk. Sizing from the stop distance is covered in the <a href="/risk-engine/">risk engine programme</a>; it is the hinge on which this entire technique turns.</p>
+<h2>What sweeps are not</h2>
+<p>A sweep is not a signal to fade everything. Liquidity can also be consumed and followed by genuine continuation — the same trigger event, the opposite outcome. The distinguishing factor is what the market does afterwards, and you will frequently only know in hindsight.</p>
+<p>That uncertainty is fine, provided your plan defines both outcomes in advance. A reasonable structure: after a sweep, take the trade in the direction of the reversion with a stop beyond the extreme, and accept a defined loss if the market instead accepts beyond the level. The plan is symmetric; only one of the two outcomes needs to pay.</p>
+<h2>The uncomfortable conclusion</h2>
+<p>If stops cluster where everyone can see them, then popular levels are structurally more dangerous than they appear. The practical response is not paranoia. It is to stop treating obvious extremes as clean support and resistance, and start treating them as places where something is likely to happen — then waiting to see which way.</p>
+<div class="ct-sources not-prose"><h2>Sources &amp; further reading</h2><ol><li><a href="https://www.cmegroup.com/articles/faqs/market-by-order-mbo.html" rel="noopener nofollow" target="_blank">CME Group: Market by Order (MBO) data-feed specification</a></li>
+<li><a href="https://arxiv.org/abs/2112.02947" rel="noopener nofollow" target="_blank">The Price Impact of Generalized Order Flow Imbalance (arXiv:2112.02947)</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Market_profile" rel="noopener nofollow" target="_blank">Market profile — overview of the auction framework</a></li></ol><p>External links open the primary source. Nothing on this page is investment advice; see the <a href="/risk-disclosures/">risk disclosures</a>.</p></div>

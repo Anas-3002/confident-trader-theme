@@ -1,0 +1,33 @@
+<p>Ask a losing trader what went wrong and the answer is usually about direction. Look at the account statement and the answer is usually about size. A position that is three times too large converts an ordinary losing trade into an account-threatening event, and it does so without any change in the quality of the idea.</p>
+<h2>The order of operations</h2>
+<p>Sizing is not a decision you make after the entry. It is arithmetic performed in a fixed sequence:</p>
+<ol>
+<li><strong>Define the invalidation level.</strong> Where is the idea wrong? This is a market-structure question, not a comfort question.</li>
+<li><strong>Measure the stop distance in ticks.</strong> Entry to invalidation, using the instrument's tick size. For the Micro E-mini S&amp;P 500, for example, contract specifications define the tick size and value precisely — always confirm against the exchange specification rather than a forum post.</li>
+<li><strong>Choose a risk budget per trade.</strong> A percentage of account equity you are willing to lose if the stop is hit. This is a policy decision, and it should be small enough that a string of losses does not threaten the account.</li>
+<li><strong>Divide.</strong> Contracts = risk budget ÷ (stop distance in ticks × tick value). Round down, not to the nearest.</li>
+</ol>
+<p>Run in this order, a wider stop automatically produces a smaller position. That is what makes structural stop placement affordable, and it is the mechanism most traders skip.</p>
+<h2>Why "risk 1%" is not a complete policy</h2>
+<p>A per-trade percentage is necessary and insufficient. Two positions at one percent each can be a single two-percent position if they express the same view in correlated instruments. Four index futures long positions — ES, NQ, YM, RTY — are one macro bet at four times the size, not four independent trades.</p>
+<p>The practical addition is an <strong>aggregate exposure check</strong> before entry: what is my total risk if everything I am holding moves against me at the same time? If you cannot answer that in one number, your risk is not being managed, it is being accumulated.</p>
+<h2>What the Kelly criterion actually says</h2>
+<p>The Kelly criterion gives the bet size that maximises the long-run growth rate of capital, given a known edge and known odds. It is genuinely useful — Ed Thorp's work applying it to blackjack and then to markets is the canonical treatment — but it comes with two properties that make naive use dangerous for traders.</p>
+<p>First, it requires <em>accurate</em> estimates of your edge and your payoff distribution. Traders consistently overestimate both. Second, full Kelly produces drawdowns that most people cannot psychologically survive even when the mathematics is correct; the growth-optimal bet is not the comfort-optimal bet.</p>
+<p>The common compromise is fractional Kelly — a fraction of the full Kelly stake, frequently a quarter or less — which gives up some theoretical growth in exchange for materially smaller drawdowns. For most discretionary traders, the honest framing is that Kelly is a disciplined way to think about size relative to edge, not a formula to be applied literally to a subjective probability.</p>
+<h2>Daily and weekly circuit breakers</h2>
+<p>Sizing controls the damage of one trade. It does not control what happens after four losses in a morning. That requires a second layer:</p>
+<ul>
+<li><strong>Daily loss limit.</strong> A hard number, ideally enforced at the broker so it does not depend on your discipline mid-session. When it is hit, the trading day is over.</li>
+<li><strong>Consecutive-loss rule.</strong> A stop after N losses in a row regardless of size, because sequences of losses correlate with poor conditions and deteriorating judgement.</li>
+<li><strong>Weekly review gate.</strong> A short written review before the next week begins. Not optional, and not skipped when the week went well.</li>
+</ul>
+<h2>Backtest the sequence, not the trade</h2>
+<p>Individual trade outcomes tell you very little. A run of ten losses inside a hundred trades is statistically unremarkable and will happen to real strategies. The reason sizing deserves this much attention is that it determines whether a normal, expected losing sequence is survivable. If a routine streak ends your account, no edge is large enough to matter.</p>
+<h2>Regulatory framing</h2>
+<p>Performance claims in this industry are regulated for a reason. CFTC Rule 4.41 exists because hypothetical and actual results differ substantially, and any presentation of trading results should be read with that in mind — including the illustrative figures on this site, which are covered by the <a href="/risk-disclosures/">risk disclosures</a>.</p>
+<p>Sizing is taught as the first module of the <a href="/risk-engine/">risk engine programme</a>, before any setup material, and it is reviewed against member journals on the <a href="/live-trading-floor/">live floor</a>.</p>
+<div class="ct-sources not-prose"><h2>Sources &amp; further reading</h2><ol><li><a href="https://www.edwardothorp.com/wp-content/uploads/2016/11/TheKellyCriterionAndTheStockMarket.pdf" rel="noopener nofollow" target="_blank">Ed Thorp: The Kelly Criterion in Blackjack, Sports Betting, and the Stock Market</a></li>
+<li><a href="https://www.cmegroup.com/markets/equities/sp/micro-e-mini-sandp-500.contractSpecs.html" rel="noopener nofollow" target="_blank">CME Group: Micro E-mini S&P 500 contract specifications</a></li>
+<li><a href="https://www.ecfr.gov/current/title-17/chapter-I/part-4/section-4.41" rel="noopener nofollow" target="_blank">CFTC Rule 4.41 — hypothetical performance results</a></li>
+<li><a href="https://www.nfa.futures.org/investors/investor-resources/files/prop-trading-firms.pdf" rel="noopener nofollow" target="_blank">NFA: Investor guidance on proprietary trading firms</a></li></ol><p>External links open the primary source. Nothing on this page is investment advice; see the <a href="/risk-disclosures/">risk disclosures</a>.</p></div>

@@ -1,0 +1,210 @@
+<?php
+/**
+ * Confident Trader theme bootstrap.
+ *
+ * @package ConfidentTrader
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+define( 'CT_VERSION', '1.0.0' );
+define( 'CT_CONTENT_VERSION', '1.0.0' );
+
+require_once get_template_directory() . '/inc/helpers.php';
+require_once get_template_directory() . '/inc/seo.php';
+require_once get_template_directory() . '/inc/forms.php';
+require_once get_template_directory() . '/inc/installer.php';
+
+/**
+ * Render the form markers that live inside stored page content.
+ *
+ * Nonces and admin-post actions cannot be stored, so the fragment keeps a
+ * marker and the form is rendered per request.
+ *
+ * @param string $content Post content.
+ * @return string
+ */
+function ct_render_form_markers( $content ) {
+	if ( false === strpos( $content, '<!--CT_FORM:' ) ) {
+		return $content;
+	}
+	return preg_replace_callback(
+		'/<!--CT_FORM:([a-z_]+)-->/',
+		function ( $m ) {
+			return ct_form( $m[1] );
+		},
+		$content
+	);
+}
+add_filter( 'the_content', 'ct_render_form_markers', 8 );
+
+/**
+ * Elementor ships its front-end framework on every request. The design pages are
+ * rendered by this theme, so drop Elementor's assets there and keep the payload
+ * for pages that actually contain an Elementor document.
+ */
+function ct_dequeue_elementor_on_theme_pages() {
+	if ( is_admin() || ! is_singular() ) {
+		return;
+	}
+	$post = get_post();
+	if ( ! $post ) {
+		return;
+	}
+	// Only intervene when the post has no Elementor document of its own.
+	$built = get_post_meta( $post->ID, '_elementor_edit_mode', true );
+	if ( 'builder' === $built ) {
+		return;
+	}
+	foreach ( array( 'elementor-frontend', 'elementor-frontend-css', 'elementor-icons', 'elementor-animations' ) as $handle ) {
+		wp_dequeue_style( $handle );
+		wp_dequeue_script( $handle );
+	}
+}
+add_action( 'wp_enqueue_scripts', 'ct_dequeue_elementor_on_theme_pages', 99 );
+
+/**
+ * Theme supports.
+ */
+function ct_setup() {
+	load_theme_textdomain( 'confident-trader', get_template_directory() . '/languages' );
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'automatic-feed-links' );
+	add_theme_support( 'html5', array( 'search-form', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
+	add_theme_support( 'custom-logo', array( 'height' => 40, 'width' => 40, 'flex-height' => true, 'flex-width' => true ) );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'align-wide' );
+
+	register_nav_menus(
+		array(
+			'primary' => __( 'Primary Navigation', 'confident-trader' ),
+			'footer'  => __( 'Footer Navigation', 'confident-trader' ),
+		)
+	);
+}
+add_action( 'after_setup_theme', 'ct_setup' );
+
+/**
+ * Content width.
+ */
+function ct_content_width() {
+	$GLOBALS['content_width'] = 1280;
+}
+add_action( 'after_setup_theme', 'ct_content_width', 0 );
+
+/**
+ * Front-end assets.
+ */
+function ct_assets() {
+	$dir = get_template_directory();
+	$uri = get_template_directory_uri();
+
+	wp_enqueue_style( 'ct-fonts', $uri . '/assets/css/fonts.css', array(), ct_asset_version( '/assets/css/fonts.css' ) );
+	wp_enqueue_style( 'ct-theme', $uri . '/assets/css/theme.css', array( 'ct-fonts' ), ct_asset_version( '/assets/css/theme.css' ) );
+	wp_enqueue_style( 'ct-design', $uri . '/assets/css/design.css', array( 'ct-theme' ), ct_asset_version( '/assets/css/design.css' ) );
+	wp_enqueue_style( 'ct-style', get_stylesheet_uri(), array( 'ct-design' ), ct_asset_version( '/style.css' ) );
+
+	wp_enqueue_script( 'ct-theme', $uri . '/assets/js/theme.js', array(), ct_asset_version( '/assets/js/theme.js' ), true );
+	wp_script_add_data( 'ct-theme', 'strategy', 'defer' );
+}
+add_action( 'wp_enqueue_scripts', 'ct_assets' );
+
+/**
+ * Cache-busting version from file mtime.
+ *
+ * @param string $rel Relative path inside the theme.
+ * @return string
+ */
+function ct_asset_version( $rel ) {
+	$path = get_template_directory() . $rel;
+	return file_exists( $path ) ? (string) filemtime( $path ) : CT_VERSION;
+}
+
+/**
+ * Body classes so the design's base surface, font and selection colours apply.
+ *
+ * @param array $classes Body classes.
+ * @return array
+ */
+function ct_body_class( $classes ) {
+	$classes[] = 'ct-site';
+	if ( is_front_page() ) {
+		$classes[] = 'ct-home';
+	}
+	return $classes;
+}
+add_filter( 'body_class', 'ct_body_class' );
+
+/**
+ * Meta viewport + charset are core; keep the design's shell attributes.
+ */
+function ct_language_attributes( $output ) {
+	return $output . ' class="dark"';
+}
+add_filter( 'language_attributes', 'ct_language_attributes' );
+
+/**
+ * Never let wpautop reformat the managed design markup.
+ */
+function ct_remove_autop() {
+	if ( is_singular() ) {
+		$post = get_post();
+		if ( $post && get_post_meta( $post->ID, '_ct_managed', true ) ) {
+			remove_filter( 'the_content', 'wpautop', 10 );
+			remove_filter( 'the_content', 'wptexturize', 10 );
+			remove_filter( 'the_content', 'convert_smilies', 20 );
+		}
+	}
+}
+add_action( 'wp', 'ct_remove_autop' );
+
+/**
+ * Excerpt length for insight cards.
+ *
+ * @return int
+ */
+function ct_excerpt_length() {
+	return 26;
+}
+add_filter( 'excerpt_length', 'ct_excerpt_length' );
+
+/**
+ * Excerpt "read more" suffix.
+ *
+ * @return string
+ */
+function ct_excerpt_more() {
+	return '&hellip;';
+}
+add_filter( 'excerpt_more', 'ct_excerpt_more' );
+
+/**
+ * Register the insight post type category archive nicety: 12 posts per page.
+ *
+ * @param WP_Query $query Query.
+ */
+function ct_pre_get_posts( $query ) {
+	if ( is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+	if ( $query->is_home() || $query->is_category() || $query->is_tag() || $query->is_search() ) {
+		$query->set( 'posts_per_page', 9 );
+	}
+}
+add_action( 'pre_get_posts', 'ct_pre_get_posts' );
+
+/**
+ * Drop the emoji/shortlink head cruft — small performance win.
+ */
+function ct_clean_head() {
+	remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+	remove_action( 'wp_print_styles', 'print_emoji_styles' );
+	remove_action( 'wp_head', 'wp_generator' );
+	remove_action( 'wp_head', 'wlwmanifest_link' );
+	remove_action( 'wp_head', 'rsd_link' );
+	remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+}
+add_action( 'init', 'ct_clean_head' );

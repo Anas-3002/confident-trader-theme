@@ -1,0 +1,33 @@
+<p>Order-flow tools are seductive because they appear to show intent. A large resting bid looks like a buyer who wants to be filled. An aggressive market sell looks like a seller who needs out. Sometimes that reading is right. Often it is an inference laid on top of data that does not support it.</p>
+<h2>What the data actually is</h2>
+<p>Depth of market shows resting, visible orders. A footprint chart shows executed volume at each price, usually split into bid-side and ask-side trades. Market-by-order feeds take this further and expose individual order-level detail, including queue position — but access to that depends on your data subscription and platform, and it is not what you see on a standard retail footprint chart.</p>
+<p>Three things follow from that:</p>
+<ul>
+<li><strong>You are seeing the visible book, not the whole market.</strong> Iceberg orders, hidden and non-displayed liquidity, and order types that only reveal themselves on execution are invisible until they trade.</li>
+<li><strong>Resting size is a claim, not a commitment.</strong> A large bid can be filled, can be pulled, or can be placed to create the appearance of support. There is no way to tell the difference from the book alone.</li>
+<li><strong>Executed volume is fact.</strong> Trade that printed happened. This is the most reliable part of the toolkit, and the part most people under-use.</li>
+</ul>
+<h2>Four readings that are usually wrong</h2>
+<h3>1. "Big bid = support"</h3>
+<p>Size on the bid is often absorbed. The informative event is not the size; it is what happens when price reaches it. If price trades into a large bid and holds, the bid is real for now. If price trades into it and continues through with little resistance, you have just watched it fail — which is itself useful information, and frequently a better trade than the one you were planning.</p>
+<h3>2. "Aggressive selling = bearish"</h3>
+<p>Aggressive market selling into a level that does not move is absorption. Someone is taking the other side of every market order and price is not going down. Read in isolation, a delta number is noise; read against the price response it produced, it is a clue.</p>
+<h3>3. "The chart shows trapped traders"</h3>
+<p>Trap narratives attach a story to a price event you cannot verify. You know price failed to hold a level. You do not know who is trapped, how much size they hold, or whether they are hedging something larger. Trade the observable, not the story.</p>
+<h3>4. "This is institutional"</h3>
+<p>Attributing individual prints to "institutions" is unfalsifiable. What you can say is that a specific volume pattern executed at a specific price and that price did or did not subsequently move. Everything else is decoration.</p>
+<h2>A defensible workflow</h2>
+<ol>
+<li><strong>Mark levels first, without order flow.</strong> Prior extremes, prior value edges, overnight range. If a level is not on the list, order flow cannot put it there.</li>
+<li><strong>Wait for interaction.</strong> When price arrives at a level, watch the <em>response</em>: does volume increase and price stop, or does price cut through?</li>
+<li><strong>Score the response in words, not charts.</strong> "Bid absorbed three minutes of selling without losing the level" is a testable observation. "Strong support" is not.</li>
+<li><strong>Write the invalidation before entry.</strong> If the level fails and price accepts below it, the read is dead. No averaging, no reinterpreting.</li>
+</ol>
+<h2>Practical settings note</h2>
+<p>Footprint charts are only as good as their aggregation. A five-tick footprint on an illiquid contract produces noise; a large tick-per-row setting on a fast market hides the detail you wanted. Because liquidity varies by instrument and session, calibrate per contract rather than using one global setting — CME's own work on assessing liquidity with book depth is a useful reminder that depth alone is an incomplete proxy.</p>
+<h2>Where to take this next</h2>
+<p>The <a href="/order-flow-mastery/">market structure and order-flow programme</a> sequences this material with the auction framework, and the <a href="/live-trading-floor/">live execution floor</a> exists so you can hear these reads made in real time — including the sessions where the honest answer is that the flow said nothing at all.</p>
+<p>Finally: order flow is a tool for confirmation and timing. It is not a substitute for risk rules, and it will not rescue a position that should already be closed. See the <a href="/risk-engine/">risk engine programme</a> for that half of the problem.</p>
+<div class="ct-sources not-prose"><h2>Sources &amp; further reading</h2><ol><li><a href="https://www.cmegroup.com/articles/faqs/market-by-order-mbo.html" rel="noopener nofollow" target="_blank">CME Group: Market by Order (MBO) data-feed specification</a></li>
+<li><a href="https://www.cmegroup.com/education/articles-and-reports/assessing-liquidity" rel="noopener nofollow" target="_blank">CME Group: Assessing liquidity — is book depth sufficient?</a></li>
+<li><a href="https://arxiv.org/abs/2112.02947" rel="noopener nofollow" target="_blank">The Price Impact of Generalized Order Flow Imbalance (arXiv:2112.02947)</a></li></ol><p>External links open the primary source. Nothing on this page is investment advice; see the <a href="/risk-disclosures/">risk disclosures</a>.</p></div>

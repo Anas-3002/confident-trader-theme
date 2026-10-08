@@ -1,0 +1,31 @@
+<p>A moving average is arithmetic performed on past prices. An RSI is a ratio computed from past gains and losses. A MACD is the difference between two moving averages. None of them contain information about the future; all of them are descriptions of the past rendered in a shape that is easier to look at.</p>
+<p>That is not a reason to dismiss them. It is a reason to be precise about what they can do.</p>
+<h2>Every indicator shares one property</h2>
+<p>By construction, an indicator responds to price after price has moved. The longer its lookback, the smoother it looks and the later it responds. This trade-off is not tunable away: smoothing is filtering, and filtering is delay.</p>
+<p>The practical consequence is that indicator-based systems tend to enter after a move has begun and exit after it has ended. In a sustained trend this is an acceptable cost. In a rotation — the majority of sessions in most liquid markets — it repeatedly buys the top of the range and sells the bottom.</p>
+<h2>What order flow measures that indicators cannot</h2>
+<p>Order-flow data measures the <em>process</em> by which price changed, not just the result. Specifically:</p>
+<ul>
+<li><strong>How much volume traded at each price.</strong> This distinguishes a level that was passed through from a level where participants actually did business.</li>
+<li><strong>Whether aggressive orders were absorbed.</strong> If large market orders execute and price does not move, that is a statement about resting liquidity that no indicator encodes.</li>
+<li><strong>Where the auction was rejected.</strong> Poor extremes — highs and lows made without two-way trade — are visible in volume distribution and invisible in an oscillator.</li>
+</ul>
+<p>Academic work on order flow imbalance establishes formally what practitioners observe empirically: imbalance between buy-side and sell-side order flow explains short-horizon price changes in a way that price-derived statistics do not.</p>
+<h2>The strongest honest claim for order flow</h2>
+<p>Order flow does not predict. Its real advantage is <em>disambiguation</em>: it helps you tell apart two situations that look identical on a price chart. A level that is holding because buyers keep absorbing and a level that is holding because nobody has tested it yet produce the same candles and different order-flow pictures.</p>
+<p>That is a narrower claim than the marketing around these tools, and it is the one that survives contact with live markets.</p>
+<h2>Where indicators still earn their place</h2>
+<ul>
+<li><strong>Regime context.</strong> A volatility measure or an average range tells you what size is appropriate today. That is a risk input, not an entry signal.</li>
+<li><strong>Consistency.</strong> A mechanical filter can keep a discretionary trader from taking trades in conditions they have decided to avoid. The value is in the constraint, not the prediction.</li>
+<li><strong>Backtesting a definition.</strong> If you need a reproducible definition of "trending" for research, an indicator gives you one. You are using it as a label, not as an oracle.</li>
+</ul>
+<p>The mistake is not using indicators. It is using a lagging transform of price to make a timing decision that requires information about resting liquidity, and then wondering why entries consistently arrive late.</p>
+<h2>What to replace, and what to keep</h2>
+<p>A workable transition is to remove indicators from the entry decision first, while keeping them for context. Mark your levels by hand. Watch how price behaves at those levels. Journal the behaviour you observed rather than the indicator state you saw.</p>
+<p>Within a few weeks you will have something more valuable than a better indicator: a record of how the instruments you trade behave at specific levels, which is the raw material any process is eventually built from.</p>
+<h2>Further reading</h2>
+<p>The <a href="/order-flow-mastery/">order-flow and market structure programme</a> covers the mechanics in depth, and Module 2 of the <a href="/curriculum/">masterclass curriculum</a> deals specifically with footprint and depth-of-market interpretation.</p>
+<div class="ct-sources not-prose"><h2>Sources &amp; further reading</h2><ol><li><a href="https://arxiv.org/abs/2112.02947" rel="noopener nofollow" target="_blank">The Price Impact of Generalized Order Flow Imbalance (arXiv:2112.02947)</a></li>
+<li><a href="https://www.cmegroup.com/education/articles-and-reports/assessing-liquidity" rel="noopener nofollow" target="_blank">CME Group: Assessing liquidity — is book depth sufficient?</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Market_profile" rel="noopener nofollow" target="_blank">Market profile — overview of the auction framework</a></li></ol><p>External links open the primary source. Nothing on this page is investment advice; see the <a href="/risk-disclosures/">risk disclosures</a>.</p></div>

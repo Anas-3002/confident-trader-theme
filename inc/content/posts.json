@@ -1,0 +1,107 @@
+{
+  "posts": [
+    {
+      "slug": "auction-market-theory-explained",
+      "title": "Auction Market Theory, Explained Without The Jargon",
+      "excerpt": "Auction market theory is not a trading strategy. It is a description of how price is discovered when buyers and sellers meet \u2014 and it changes what you look for on a chart.",
+      "category": "Market Structure",
+      "tags": [
+        "auction market theory",
+        "market profile",
+        "market structure"
+      ],
+      "words": 690
+    },
+    {
+      "slug": "reading-dom-and-footprint-without-fooling-yourself",
+      "title": "Reading DOM And Footprint Charts Without Fooling Yourself",
+      "excerpt": "Depth of market and footprint charts show real order flow, but they are also the easiest tools in trading to over-read. Here is what the data can and cannot tell you.",
+      "category": "Order Flow",
+      "tags": [
+        "order flow",
+        "footprint",
+        "depth of market"
+      ],
+      "words": 704
+    },
+    {
+      "slug": "liquidity-sweeps-why-your-stop-is-the-liquidity",
+      "title": "Liquidity Sweeps: Why Your Stop Loss Is The Liquidity",
+      "excerpt": "Price does not hunt stops out of malice. It moves towards where resting orders are, because that is where fills exist. Understanding that changes where you put your stops.",
+      "category": "Order Flow",
+      "tags": [
+        "liquidity",
+        "stops",
+        "market structure"
+      ],
+      "words": 682
+    },
+    {
+      "slug": "position-sizing-that-survives-drawdowns",
+      "title": "Position Sizing That Survives Real Drawdowns",
+      "excerpt": "Sizing is the only variable in trading with a guaranteed mathematical effect on your results. Here is how to derive contract count from the stop \u2014 and why full Kelly is not the answer.",
+      "category": "Risk Management",
+      "tags": [
+        "position sizing",
+        "risk management",
+        "kelly criterion"
+      ],
+      "words": 749
+    },
+    {
+      "slug": "how-prop-firm-evaluation-rules-work",
+      "title": "How Prop Firm Evaluation Rules Actually Work",
+      "excerpt": "Evaluations are a rules-based game with specific failure modes. Reading the rulebook properly changes how you should trade the account.",
+      "category": "Prop Trading",
+      "tags": [
+        "prop firm",
+        "evaluation",
+        "drawdown"
+      ],
+      "words": 685
+    },
+    {
+      "slug": "pre-market-preparation-checklist",
+      "title": "A 15-Minute Pre-Market Preparation Routine",
+      "excerpt": "Preparation is not screen time. It is the process of turning market context into three written scenarios before the first tick prints.",
+      "category": "Process",
+      "tags": [
+        "preparation",
+        "routine",
+        "levels"
+      ],
+      "words": 690
+    },
+    {
+      "slug": "why-lagging-indicators-lose-to-order-flow",
+      "title": "Why Lagging Indicators Lose To Order Flow",
+      "excerpt": "Every indicator is a transformation of price and volume that has already happened. Understanding that derivation explains both what indicators are good for and when they mislead.",
+      "category": "Market Structure",
+      "tags": [
+        "indicators",
+        "order flow",
+        "methodology"
+      ],
+      "words": 615
+    },
+    {
+      "slug": "trade-journal-that-changes-behaviour",
+      "title": "A Trade Journal That Actually Changes Behaviour",
+      "excerpt": "Most journals are diaries. A journal that changes behaviour scores process against a written plan and looks for the pattern in your mistakes, not your P&L.",
+      "category": "Process",
+      "tags": [
+        "journal",
+        "psychology",
+        "discipline"
+      ],
+      "words": 633
+    }
+  ],
+  "categories": [
+    "Market Structure",
+    "Order Flow",
+    "Risk Management",
+    "Prop Trading",
+    "Process"
+  ]
+}
